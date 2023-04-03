@@ -32,7 +32,7 @@ steps:
 - task: NuGetAuthenticate@0
   displayName: 'Authenticate NuGet feed'
   inputs:
-    nuGetServiceConnections: 'MyNuGetFeed'
+    nuGetServiceConnections: 'FeedConnection'
 
 - task: NuGetCommand@2
   displayName: 'Push NuGet package'
@@ -40,5 +40,5 @@ steps:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/packages/*.nupkg'
     nuGetFeedType: 'external'
-    publishVstsFeed: 'MyNuGetFeed'
+    publishVstsFeed: 'Feed'
     allowPackageConflicts: true
