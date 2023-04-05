@@ -1,0 +1,36 @@
+trigger:
+- master
+
+variables:
+  buildConfiguration: 'Release'
+  nugetFeed: 'https://pkgs.dev.azure.com/ypate131/Lab4/_packaging/Lab4Feed/nuget/v3/index.json'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    version: '6.x'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'versionNumber'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: NuGetAuthenticate@0
+  inputs:
+    nuGetServiceConnections: '$(nugetFeed)'
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: 'external'
+    publishVstsFeed: '$(nugetFeed)'
